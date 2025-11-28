@@ -1,0 +1,75 @@
+{
+  "name": "Google Sheets → Email Automation",
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "parameters": {
+        "operation": "read",
+        "sheetId": "YOUR_SHEET_ID",
+        "range": "Sheet1!A1:C20"
+      }
+    },
+    {
+      "id": "2",
+      "name": "Set Email Content",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [500, 300],
+      "parameters": {
+        "fields": {
+          "string": [
+            {
+              "name": "subject",
+              "value": "New Data Received"
+            },
+            {
+              "name": "message",
+              "value": "Here is the latest data from Google Sheets."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "3",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [750, 300],
+      "parameters": {
+        "fromEmail": "yourname@example.com",
+        "toEmail": "client@example.com",
+        "subject": "={{$json.subject}}",
+        "text": "={{$json.message}}"
+      }
+    }
+  ],
+  "connections": {
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Set Email Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Email Content": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
